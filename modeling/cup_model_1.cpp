@@ -151,7 +151,7 @@ int main(int argc, char* argv[]) {
 	const int VN = 400;
 	double tol = 1. / sqrt(UN*VN);
 
-	const double thickness = 0.01;
+	const double thickness = 0.02;  // half
 	const double eps = 1e-5;
 
 	if (0) {

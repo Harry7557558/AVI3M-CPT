@@ -225,7 +225,7 @@ int SPP = 0;  // sample per pixel
 // dome light
 vec3 calcCol(vec3 ro, vec3 rd, uint32_t &seed) {
 
-	vec3 m_col = vec3(20.), col;
+	vec3 m_col = vec3(1.), col;
 
 	// "recursive" ray-tracing
 	for (int iter = 0; iter < 20; iter++) {
@@ -256,7 +256,7 @@ vec3 calcCol(vec3 ro, vec3 rd, uint32_t &seed) {
 		// background
 		if (intersect_id == -1) {
 			// calculate incoming light
-			vec3 col = vec3(pow(max(dot(rd, normalize(vec3(0.1, 0.3, 1))), 0.), 1.));
+			vec3 col = vec3(50.*pow(max(dot(rd, normalize(vec3(0.1, 0.3, 1))), 0.), 5.));
 			return m_col * col;
 		}
 
@@ -363,7 +363,7 @@ void Init() {
 	constructBVH(BVH_R, BT, Min, Max);
 
 	if (!plane_brdf) {
-		BRDFDatabase::read_brdf("D:\\Coding\\Github\\AVI3M-CPT\\preview\\BRDFDatabase\\brdfs\\alum-bronze.binary", plane_brdf);
+		BRDFDatabase::read_brdf("D:\\Homework\\AVI3M\\AVI3M-CPT\\preview\\BRDFDatabase\\brdfs\\alum-bronze.binary", plane_brdf);
 		for (double a = 0.; a < PI; a += 0.01*PI) {
 			vec3 wi = vec3(1e-8, 1e-9, 1);
 			vec3 wo = vec3(cos(a), 0, sin(a));
@@ -373,7 +373,7 @@ void Init() {
 		//exit(0);
 	}
 	if (!cup_brdf)
-		BRDFDatabase::read_brdf("D:\\Coding\\Github\\AVI3M-CPT\\preview\\BRDFDatabase\\brdfs\\pvc.binary", cup_brdf);
+		BRDFDatabase::read_brdf("D:\\Homework\\AVI3M\\AVI3M-CPT\\preview\\BRDFDatabase\\brdfs\\pvc.binary", cup_brdf);
 }
 
 
