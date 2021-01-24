@@ -151,7 +151,7 @@ int main(int argc, char* argv[]) {
 
 
 	// place it on the plane
-	if (0) {
+	if (1) {
 		double min_z = INFINITY;
 		for (int i = 0; i < (int)trigs.size(); i++) {
 			min_z = min(min(min_z, trigs[i][0].z), min(trigs[i][1].z, trigs[i][2].z));
