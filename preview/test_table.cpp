@@ -13,14 +13,51 @@ BVH* BVH_R = 0;
 
 
 #include "brdf.h"
-double* plane_brdf = NULL;
-double* table_brdf = NULL;
 
+texture nautilus_macromphalus_2("D:\\Homework\\AVI3M\\AVI3M-CPT\\textures\\nautilus_macromphalus_2.png");
+texture neptunea_arthritica_2("D:\\Homework\\AVI3M\\AVI3M-CPT\\textures\\neptunea_arthritica_2.png");
+texture haliotis_discus_2("D:\\Homework\\AVI3M\\AVI3M-CPT\\textures\\haliotis_discus_2.png");
+texture pitar_lupanaria_2("D:\\Homework\\AVI3M\\AVI3M-CPT\\textures\\pitar_lupanaria_2.png");
 
-//texture cup_texture("D:\\Homework\\AVI3M\\AVI3M-CPT\\textures\\nautilus.jpg");
-texture cup_texture("D:\\Homework\\AVI3M\\AVI3M-CPT\\textures\\nautilus_macromphalus.png");
 texture table_texture("D:\\Homework\\AVI3M\\AVI3M-CPT\\textures\\1f7dca9c22f324751f2a5a59c9b181dfe3b5564a04b724c657732d0bf09c99db.jpg");  // Shadertoy wood texture
 
+
+struct cup {
+	const vec2 cupdim = vec2(20., 9.);
+	vec3 pos;
+	double scale;
+	texture* tex;
+	vec2 tex_sc;
+	mat2 tex_ang;
+	cup(vec3 pos, double scale, texture* tex, double tex_scale, double tex_ang) {
+		this->pos = pos, this->scale = scale;
+		this->tex = tex;
+		this->tex_sc = (1. / tex_scale) * (cupdim / vec2(tex->res)) * max(tex->res.x / cupdim.x, tex->res.y / cupdim.y);
+		this->tex_ang = rotationMatrix2d(tex_ang);
+	}
+	bool intersect(vec3 ro, vec3 rd, double &t, vec3 &n) {
+		bool k = intersectScene(BVH_R, ro - pos, rd, t, n);
+		return k;
+	}
+	vec3 getTexture(vec3 p) {
+		p -= pos;
+		vec2 pxy = tex_ang * p.xy();
+		vec2 uv = vec2(atan2(pxy.y, pxy.x) / (2.*PI) + 0.5, p.z / cupdim.y);
+		uv = (uv - vec2(0, 0.5)) * tex_sc + vec2(0, 0.5);
+		if (uv.x > 0. && uv.x < 1. && uv.y > 0. && uv.y < 1.)
+			return tex->fetch(uv.x, uv.y);
+		return vec3(1.);
+	}
+};
+
+std::vector<cup> Cups({
+
+	cup(vec3(160, 110, 80), 1.0, &nautilus_macromphalus_2, 1.0, 0.75*PI),
+	cup(vec3(170, 110, 80), 1.0, &neptunea_arthritica_2, 1.0, 0.75*PI),
+	cup(vec3(180, 110, 80), 1.0, &haliotis_discus_2, 1.0, 0.75*PI),
+	cup(vec3(190, 110, 80), 1.0, &pitar_lupanaria_2, 1.0, 0.75*PI),
+
+	});
 
 
 
@@ -43,7 +80,7 @@ vec3 calcCol(vec3 ro, vec3 rd, uint32_t &seed) {
 
 		int intersect_id = -1;  // which object the ray hits
 		const int PLANE = 0x00, WALL = 0x01, CEILING = 0x02,
-			TABLE = 0x10, CUP = 0x11,
+			TABLE = 0x10, CUP_0 = 0x100,
 			CEILING_LIGHT = 0x20, WINDOW_LIGHT = 0x21;
 		const bool CEILING_LIGHT_ON = false;
 		const bool WINDOW_LIGHT_ON = true;
@@ -103,10 +140,13 @@ vec3 calcCol(vec3 ro, vec3 rd, uint32_t &seed) {
 			}
 
 			// intersect cup
-			if (intersectScene(BVH_R, ro - CUP_POS, rd, t = min_t, n)) {
-				min_t = t, min_n = n;
-				intersect_id = CUP;
-				if (BreakWhenIntersect) return true;
+			if (1) {
+				for (int i = 0; i < (int)Cups.size(); i++) {
+					if (Cups[i].intersect(ro, rd, t = min_t, n)) {
+						min_t = t, min_n = n;
+						intersect_id = CUP_0 + i;
+					}
+				}
 			}
 
 			return min_t < min_t_0;
@@ -220,21 +260,16 @@ vec3 calcCol(vec3 ro, vec3 rd, uint32_t &seed) {
 			}
 
 			// cup
-			if (intersect_id == CUP) {
+			if (intersect_id >= CUP_0) {
 				// ray calculation
 				vec3 wi = -rd;
 				vec3 wo = randdir_cosWeighted(min_n, seed);
 				// color calculation
-				col = vec3(0.8, 0.85, 0.9);
-				const vec2 cupdim = vec2(20., 9.);
-				vec3 p = ro + rd * min_t - CUP_POS;
-				vec2 pxy = rotationMatrix2d(1.5*PI)*p.xy();
-				vec2 uv = vec2(atan2(pxy.y, pxy.x) / (2.*PI) + 0.5, p.z / cupdim.y);
-				vec2 sc = 1.0 * (cupdim / vec2(cup_texture.res)) * max(cup_texture.res.x / cupdim.x, cup_texture.res.y / cupdim.y);
-				uv = (uv - vec2(0, 0.5)) * sc + vec2(0, 0.5);
-				if (uv.x > 0. && uv.x<1. && uv.y>0. && uv.y < 1.)
-					col *= cup_texture.fetch(uv.x, uv.y);
-				m_col *= col;
+				{
+					col = Cups[intersect_id - CUP_0].getTexture(ro + rd * min_t);
+					col *= vec3(0.9, 0.9, 0.95);
+					m_col *= col;
+				}
 				// update ray
 				ro = ro + rd * min_t;
 				rd = wo;
@@ -373,16 +408,16 @@ void Init() {
 
 	std::vector<BVH_Triangle*> BT;
 	readBinarySTL("D:\\Homework\\AVI3M\\AVI3M-CPT\\modeling\\cup_model_3.stl", BT);
-	Center = vec3(180, 110, 85);
+
+	Center = vec3(0.);
+	for (int i = 0; i < (int)Cups.size(); i++)
+		Center += Cups[i].pos / Cups.size();
+	Center += vec3(0, 0, 5);
 
 	BVH_R = new BVH;
 	vec3 Min(INFINITY), Max(-INFINITY);
 	constructBVH(BVH_R, BT, Min, Max);
 
-	/*if (!plane_brdf)
-		BRDFDatabase::read_brdf("D:\\Homework\\AVI3M\\AVI3M-CPT\\preview\\BRDFDatabase\\brdfs\\alum-bronze.binary", plane_brdf);
-	if (!table_brdf)
-		BRDFDatabase::read_brdf("D:\\Homework\\AVI3M\\AVI3M-CPT\\preview\\BRDFDatabase\\brdfs\\pvc.binary", table_brdf);*/
 }
 
 
