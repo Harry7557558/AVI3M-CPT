@@ -50,15 +50,21 @@ struct cup {
 	}
 };
 
-std::vector<cup> Cups({
 
-	cup(vec3(160, 110, 80), 1.0, &nautilus_macromphalus_2, 1.0, 0.75*PI),
-	cup(vec3(170, 110, 80), 1.0, &neptunea_arthritica_2, 1.0, 0.75*PI),
-	cup(vec3(180, 110, 80), 1.0, &haliotis_discus_2, 1.0, 0.75*PI),
-	cup(vec3(190, 110, 80), 1.0, &pitar_lupanaria_2, 1.0, 0.75*PI),
+std::vector<cup> Scene_parallel_4({
+
+	cup(vec3(160, 110, 80), 1.0, &pitar_lupanaria_2, 1.0, 0.75*PI),
+	cup(vec3(170, 110, 80), 1.0, &haliotis_discus_2, 1.0, 0.75*PI),
+	cup(vec3(180, 110, 80), 1.0, &nautilus_macromphalus_2, 1.0, 0.75*PI),
+	cup(vec3(190, 110, 80), 1.0, &neptunea_arthritica_2, 1.0, 0.75*PI),
 
 	});
 
+std::vector<cup> Scene_conch({
+	cup(vec3(180, 110, 80), 1.0, &neptunea_arthritica_2, 1.0, 1.5*PI),
+	});
+
+std::vector<cup> Cups = Scene_parallel_4;
 
 
 
