@@ -1,0 +1,73 @@
+﻿<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Rendering results</title>
+
+    <style>
+        body {
+            text-align: center;
+        }
+
+        div {
+            display: inline-block;
+            margin: 20px;
+        }
+
+        img {
+            max-width: 468px;
+            max-height: 240px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>All screenshots I saved in the process</h1>
+
+    <div id="screenshots" style="width:100%;">
+        <div><a href='screenshot_20210123165325.png'><img src='screenshot_20210123165325.png' /></a><p>First rendering with a dome light</p></div><div><a href='screenshot_20210123173249.png'><img src='screenshot_20210123173249.png' /></a><p>Another dome-light preview rendering</p></div><div><a href='screenshot_20210123184020.png'><img src='screenshot_20210123184020.png' /></a><p>Experiment with a light source that is like a window</p></div><div><a href='screenshot_20210123184356.png'><img src='screenshot_20210123184356.png' /></a><p>A rendering showing the light source</p></div><div><a href='screenshot_20210123201230.png'><img src='screenshot_20210123201230.png' /></a><p>The light source is a light on the ceiling</p></div><div><a href='screenshot_20210123212628.png'><img src='screenshot_20210123212628.png' /></a><p>Implement a (biased) direct light sample for window light scene</p></div><div><a href='screenshot_20210123212810.png'><img src='screenshot_20210123212810.png' /></a><p>Implement direct light sample for ceiling light scene</p></div><div><a href='screenshot_20210124111457.png'><img src='screenshot_20210124111457.png' /></a><p>Rotate the cup and view from a different angle</p></div><div><a href='screenshot_20210124113658.png'><img src='screenshot_20210124113658.png' /></a><p>Cup with hand-drawn texture</p></div><div><a href='screenshot_20210124190706.png'><img src='screenshot_20210124190706.png' /></a><p>Try depth of field blur</p></div><div><a href='screenshot_20210125151919.png'><img src='screenshot_20210125151919.png' /></a><p>A new layout, thanks Ms. Rogers</p></div><div><a href='screenshot_20210125152042.png'><img src='screenshot_20210125152042.png' /></a><p>A new layout</p></div><div><a href='screenshot_20210125153755.png'><img src='screenshot_20210125153755.png' /></a><p>New layout</p></div><div><a href='screenshot_20210125203423.png'><img src='screenshot_20210125203423.png' /></a><p>Try to place the cup on the floor</p></div><div><a href='screenshot_20210125204328.png'><img src='screenshot_20210125204328.png' /></a><p>Place multiple cups in a scene</p></div><div><a href='screenshot_20210125205944.png'><img src='screenshot_20210125205944.png' /></a><p>Multiple cups in a scene</p></div><div><a href='screenshot_20210125212438.png'><img src='screenshot_20210125212438.png' /></a><p>Multiple cups on the table</p></div><div><a href='screenshot_20210127212408.png'><img src='screenshot_20210127212408.png' /></a><p>Multiple cups on the table</p></div><div><a href='screenshot_20210127220014.png'><img src='screenshot_20210127220014.png' /></a><p>Place an actual seashell in the scene</p></div>
+    </div>
+
+    <script>
+
+        window.onload = function () {
+            var files = [
+                ["screenshot_20210123165325.png", "First rendering with a dome light"],
+                ["screenshot_20210123173249.png", "Another dome-light preview rendering"],
+                ["screenshot_20210123184020.png", "Experiment with a light source that is like a window"],
+                ["screenshot_20210123184356.png", "A rendering showing the light source"],
+                ["screenshot_20210123201230.png", "The light source is a light on the ceiling"],
+                ["screenshot_20210123212628.png", "Implement a (biased) direct light sample for window light scene"],
+                ["screenshot_20210123212810.png", "Implement direct light sample for ceiling light scene"],
+                ["screenshot_20210124111457.png", "Rotate the cup and view from a different angle"],
+                ["screenshot_20210124113658.png", "Cup with hand-drawn texture"],
+                ["screenshot_20210124190706.png", "Try depth of field blur"],
+                ["screenshot_20210125151919.png", "A new layout, thanks Ms. Rogers"],
+                ["screenshot_20210125152042.png", "A new layout"],
+                ["screenshot_20210125153755.png", "New layout"],
+                ["screenshot_20210125203423.png", "Try to place the cup on the floor"],
+                ["screenshot_20210125204328.png", "Place multiple cups in a scene"],
+                ["screenshot_20210125205944.png", "Multiple cups in a scene"],
+                ["screenshot_20210125212438.png", "Multiple cups on the table"],
+                ["screenshot_20210127212408.png", "Multiple cups on the table"],
+                ["screenshot_20210127220014.png", "Place an actual seashell in the scene"]
+            ];
+
+            html = "";
+
+            for (var i = 0; i < files.length; i++) {
+                var file = files[i][0];
+                var description = files[i][1];
+                html += "<div><a href='" + file + "'><img src='" + file + "'/></a><p>" + description + "</p></div>";
+            }
+
+            //document.querySelector('#screenshots').innerHTML = html;
+            console.log(html);
+
+        };
+
+    </script>
+
+
+</body>
+</html>

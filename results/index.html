@@ -1,0 +1,62 @@
+﻿<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Rendering results</title>
+
+    <style>
+        body {
+            text-align: center;
+        }
+
+        div {
+            width: 100%;
+        }
+
+        a {
+            display: inline-block;
+            margin: 20px;
+        }
+
+        img {
+            max-width: 468px;
+            max-height: 240px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>All full-resolution renderings of my CPT</h1>
+
+    <div id="full-resolution-renderings">
+        <a href='render_01_0.jpg'><img src='render_01_0.jpg' /></a><a href='render_01_1.jpg'><img src='render_01_1.jpg' /></a><a href='render_01_2.jpg'><img src='render_01_2.jpg' /></a><a href='render_01_3.jpg'><img src='render_01_3.jpg' /></a><a href='render_01_4.jpg'><img src='render_01_4.jpg' /></a><br /><a href='render_02_0.jpg'><img src='render_02_0.jpg' /></a><a href='render_02_1.jpg'><img src='render_02_1.jpg' /></a><br /><a href='render_03_0.jpg'><img src='render_03_0.jpg' /></a><a href='render_03_1.jpg'><img src='render_03_1.jpg' /></a><a href='render_03_2.jpg'><img src='render_03_2.jpg' /></a>
+    </div>
+
+    <script>
+
+        window.onload = function () {
+            const blank = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAAAXNSR0IArs4c6QAAAAlwSFlzAAALEwAACxMBAJqcGAAAAAd0SU1FB9wLEhYhKmtn2wYAAAAidEVYdENvbW1lbnQAQ3JlYXRlZCB3aXRoIEdJTVAgb24gYSBNYWOHqHdDAAAADElEQVQI12P4//8/AAX+Av7czFnnAAAAAElFTkSuQmCC";
+            var files = [
+                "render_01_0.jpg", "render_01_1.jpg", "render_01_2.jpg", "render_01_3.jpg", "render_01_4.jpg", blank,
+                "render_02_0.jpg", "render_02_1.jpg", blank,
+                "render_03_0.jpg", "render_03_1.jpg", "render_03_2.jpg"
+            ];
+
+            html = "";
+
+            for (var i = 0; i < files.length; i++) {
+                var file = files[i];
+                if (file == blank) html += "<br/>";
+                else html += "<a href='" + file + "'><img src='" + file + "'/></a>";
+            }
+
+            //document.querySelector('#full-resolution-renderings').innerHTML += html;
+            console.log(html);
+
+        };
+
+    </script>
+
+
+</body>
+</html>
