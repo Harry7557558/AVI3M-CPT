@@ -10,16 +10,35 @@
 int Trig_N;
 BVH* BVH_R = 0;
 
+BVH *s_ark_clam = 0, *s_bailer_shell = 0;
+BVH* loadModel(const char* filename) {
+	std::vector<BVH_Triangle*> BT;
+	readBinarySTL(filename, BT);
+	BVH* R = new BVH;
+	vec3 Min(INFINITY), Max(-INFINITY);
+	constructBVH(R, BT, Min, Max);
+	return R;
+}
+
 
 
 #include "brdf.h"
 
-texture nautilus_macromphalus_2("D:\\Homework\\AVI3M\\AVI3M-CPT\\textures\\nautilus_macromphalus_2.png");
-texture neptunea_arthritica_2("D:\\Homework\\AVI3M\\AVI3M-CPT\\textures\\neptunea_arthritica_2.png");
-texture haliotis_discus_2("D:\\Homework\\AVI3M\\AVI3M-CPT\\textures\\haliotis_discus_2.png");
-texture pitar_lupanaria_2("D:\\Homework\\AVI3M\\AVI3M-CPT\\textures\\pitar_lupanaria_2.png");
+
+#include <string>
+const std::string _DIR = "D:\\Homework\\AVI3M\\AVI3M-CPT\\textures\\export\\";
+
+texture Chlamys_Farreri(&(_DIR + "Chlamys_Farreri.png")[0]);
+texture Haliotis_Discus(&(_DIR + "Haliotis_Discus.png")[0]);
+texture Mauritia_Mauritiana(&(_DIR + "Mauritia_Mauritiana.png")[0]);
+texture Nautilus_Macromphalus(&(_DIR + "Nautilus_Macromphalus.png")[0]);
+texture Neptunea_Arthritica(&(_DIR + "Neptunea_Arthritica.png")[0]);
+texture Pitar_Lupanaria(&(_DIR + "Pitar_Lupanaria.png")[0]);
+texture Scutellastra_Tabukaris(&(_DIR + "Scutellastra_Tabukaris.png")[0]);
+texture Thatcheria_Mirabilis(&(_DIR + "Thatcheria_Mirabilis.png")[0]);
 
 texture table_texture("D:\\Homework\\AVI3M\\AVI3M-CPT\\textures\\1f7dca9c22f324751f2a5a59c9b181dfe3b5564a04b724c657732d0bf09c99db.jpg");  // Shadertoy wood texture
+
 
 
 struct cup {
@@ -53,18 +72,50 @@ struct cup {
 
 std::vector<cup> Scene_parallel_4({
 
-	cup(vec3(160, 110, 80), 1.0, &pitar_lupanaria_2, 1.0, 0.75*PI),
-	cup(vec3(170, 110, 80), 1.0, &haliotis_discus_2, 1.0, 0.75*PI),
-	cup(vec3(180, 110, 80), 1.0, &nautilus_macromphalus_2, 1.0, 0.75*PI),
-	cup(vec3(190, 110, 80), 1.0, &neptunea_arthritica_2, 1.0, 0.75*PI),
+	cup(vec3(160, 110, 80), 1.0, &Pitar_Lupanaria, 1.0, 0.75*PI),
+	cup(vec3(170, 110, 80), 1.0, &Haliotis_Discus, 1.0, 0.75*PI),
+	cup(vec3(180, 110, 80), 1.0, &Nautilus_Macromphalus, 1.0, 0.75*PI),
+	cup(vec3(190, 110, 80), 1.0, &Neptunea_Arthritica, 1.0, 0.75*PI),
 
 	});
 
-std::vector<cup> Scene_conch({
-	cup(vec3(180, 110, 80), 1.0, &neptunea_arthritica_2, 1.0, 1.5*PI),
+std::vector<cup> Scene_single({
+	cup(vec3(180, 110, 80), 1.0, &Chlamys_Farreri, 1.0, 1.5*PI),
 	});
 
-std::vector<cup> Cups = Scene_parallel_4;
+std::vector<cup> Scene_octa({
+	cup(vec3(180, 110, 80) + 1.2*vec3(10, 4, 0), 1.0, &Chlamys_Farreri, 1.0, 1.5*PI),
+	cup(vec3(180, 110, 80) + 1.2*vec3(4, 10, 0), 1.0, &Haliotis_Discus, 1.0, 1.5*PI),
+	cup(vec3(180, 110, 80) + 1.2*vec3(-4, 10, 0), 1.0, &Mauritia_Mauritiana, 1.0, 1.5*PI),
+	cup(vec3(180, 110, 80) + 1.2*vec3(-10, 4, 0), 1.0, &Nautilus_Macromphalus, 1.0, 1.5*PI),
+	cup(vec3(180, 110, 80) + 1.2*vec3(-10, -4, 0), 1.0, &Neptunea_Arthritica, 1.0, 1.5*PI),
+	cup(vec3(180, 110, 80) + 1.2*vec3(-4, -10, 0), 1.0, &Pitar_Lupanaria, 1.0, 1.5*PI),
+	cup(vec3(180, 110, 80) + 1.2*vec3(4, -10, 0), 1.0, &Scutellastra_Tabukaris, 1.0, 1.5*PI),
+	cup(vec3(180, 110, 80) + 1.2*vec3(10, -4, 0), 1.0, &Thatcheria_Mirabilis, 1.0, 1.5*PI),
+	});
+
+std::vector<cup> Cups = Scene_single;
+
+
+
+struct seashell {
+	BVH **shape;
+	vec3 pos;
+	seashell(BVH** shape, vec3 pos) {
+		this->shape = shape;
+		this->pos = pos;
+	}
+	bool intersect(vec3 ro, vec3 rd, double &t, vec3 &n) {
+		bool k = intersectScene(*shape, ro - pos, rd, t, n);
+		return k;
+	}
+};
+
+std::vector<seashell> seashells({
+
+	seashell(&s_ark_clam, vec3(180, 110, 80) + vec3(-3, 3.5, 0)),
+
+	});
 
 
 
@@ -86,7 +137,7 @@ vec3 calcCol(vec3 ro, vec3 rd, uint32_t &seed) {
 
 		int intersect_id = -1;  // which object the ray hits
 		const int PLANE = 0x00, WALL = 0x01, CEILING = 0x02,
-			TABLE = 0x10, CUP_0 = 0x100,
+			TABLE = 0x10, CUP_0 = 0x100, SEASHELL_0 = 0x200,
 			CEILING_LIGHT = 0x20, WINDOW_LIGHT = 0x21;
 		const bool CEILING_LIGHT_ON = false;
 		const bool WINDOW_LIGHT_ON = true;
@@ -151,6 +202,16 @@ vec3 calcCol(vec3 ro, vec3 rd, uint32_t &seed) {
 					if (Cups[i].intersect(ro, rd, t = min_t, n)) {
 						min_t = t, min_n = n;
 						intersect_id = CUP_0 + i;
+					}
+				}
+			}
+
+			// intersect seashells
+			if (1) {
+				for (int i = 0; i < (int)seashells.size(); i++) {
+					if (seashells[i].intersect(ro, rd, t = min_t, n)) {
+						min_t = t, min_n = n;
+						intersect_id = SEASHELL_0 + i;
 					}
 				}
 			}
@@ -266,7 +327,7 @@ vec3 calcCol(vec3 ro, vec3 rd, uint32_t &seed) {
 			}
 
 			// cup
-			if (intersect_id >= CUP_0) {
+			if (intersect_id >= CUP_0 && intersect_id < SEASHELL_0) {
 				// ray calculation
 				vec3 wi = -rd;
 				vec3 wo = randdir_cosWeighted(min_n, seed);
@@ -274,6 +335,21 @@ vec3 calcCol(vec3 ro, vec3 rd, uint32_t &seed) {
 				{
 					col = Cups[intersect_id - CUP_0].getTexture(ro + rd * min_t);
 					col *= vec3(0.9, 0.9, 0.95);
+					m_col *= col;
+				}
+				// update ray
+				ro = ro + rd * min_t;
+				rd = wo;
+			}
+
+			// seashell
+			if (intersect_id >= SEASHELL_0) {
+				// ray calculation
+				vec3 wi = -rd;
+				vec3 wo = randdir_cosWeighted(min_n, seed);
+				// color calculation
+				{
+					col = 0.8*vec3(1.0, 0.95, 0.88);
 					m_col *= col;
 				}
 				// update ray
@@ -423,6 +499,8 @@ void Init() {
 	BVH_R = new BVH;
 	vec3 Min(INFINITY), Max(-INFINITY);
 	constructBVH(BVH_R, BT, Min, Max);
+
+	s_ark_clam = loadModel("D:\\Homework\\AVI3M\\AVI3M-CPT\\modeling\\s_ark_clam.stl");
 
 }
 
